@@ -1,0 +1,36 @@
+===== Merge Sort vs Multithreaded Merge Sort =====
+1. Enter your own array
+2. Run performance test (random / best / reverse / worst inputs)
+Enter choice: 
+CPU cores available : 12 | Threads used : 8
+n         Input           Comparisons   Normal(ms)    Thread(ms)    Speed-up
+----------------------------------------------------------------------------
+1000      Random          8690          0.286         0.299         0.96
+1000      Best (sorted)   5044          0.221         0.219         1.01
+1000      Reverse sorted  4932          0.210         0.208         1.01
+1000      Worst case      8977          0.220         0.205         1.07
+10000     Random          120465        3.073         2.742         1.12
+10000     Best (sorted)   69008         1.530         2.778         0.55
+10000     Reverse sorted  64608         1.167         1.563         0.75
+10000     Worst case      123617        1.214         1.565         0.78
+100000    Random          1536424       12.442        4.487         2.77
+100000    Best (sorted)   853904        7.478         2.847         2.63
+100000    Reverse sorted  815024        7.688         3.287         2.34
+100000    Worst case      1568929       8.529         3.049         2.80
+1000000   Random          18675342      145.239       39.850        3.64
+1000000   Best (sorted)   10066432      84.478        25.171        3.36
+1000000   Reverse sorted  9884992       79.674        22.978        3.47
+1000000   Worst case      18951425      95.318        24.679        3.86
+5000000   Random          105051246     790.968       219.307       3.61
+5000000   Best (sorted)   56894080      459.432       139.718       3.29
+5000000   Reverse sorted  54717312      730.614       203.810       3.58
+5000000   Worst case      106611393     738.539       168.658       4.38
+
+Effect of thread count (n = 1000000, random input)
+Threads   Time(ms)      Speed-up
+--------------------------------
+1         196.268       1.00
+2         109.582       1.79
+4         84.251        2.33
+8         59.702        3.29
+16        67.748        2.90
