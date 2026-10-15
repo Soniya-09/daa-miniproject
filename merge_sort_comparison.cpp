@@ -98,3 +98,11 @@ vector<int> worstArray(int n) {
     makeWorst(a, 0, n - 1);
     return a;
 }
+
+// ---------- Helpers ----------
+void printArray(const vector<int>& a) {
+    for (int x : a) cout << x << " ";
+    cout << "\n";
+}
+
+int threadsUsed(int depth) { return 1 << depth; }
