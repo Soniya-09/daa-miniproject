@@ -33,3 +33,24 @@ void mergeSort(vector<int>& a, int l, int r) {
     mergeSort(a, m + 1, r);
     merge(a, l, m, r, true);
 }
+
+// ---------- 2. Multithreaded Merge Sort ----------
+// depth = how many more levels may create a new thread.
+// depth 3 -> up to 2^3 = 8 threads work at the same time.
+const int THRESHOLD = 1000;    // small parts are sorted without a new thread
+
+void parallelMergeSort(vector<int>& a, int l, int r, int depth) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+
+    if (depth > 0 && (r - l + 1) > THRESHOLD) {
+        // left half in a new thread, right half in this thread
+        thread t(parallelMergeSort, ref(a), l, m, depth - 1);
+        parallelMergeSort(a, m + 1, r, depth - 1);
+        t.join();                               // wait for the left half
+    } else {
+        parallelMergeSort(a, l, m, 0);          // no more threads: normal recursion
+        parallelMergeSort(a, m + 1, r, 0);
+    }
+    merge(a, l, m, r, false);
+}
