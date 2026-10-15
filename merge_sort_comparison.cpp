@@ -143,3 +143,44 @@ void runBoth(const vector<int>& input, int depth, bool show) {
     cout << "Both results same and sorted?      : "
          << ((a1 == a2 && is_sorted(a1.begin(), a1.end())) ? "YES" : "NO") << "\n";
 }
+
+void benchmark(int depth) {
+    int sizes[] = {1000, 10000, 100000, 1000000, 5000000};
+    string names[] = {"Random", "Best (sorted)", "Reverse sorted", "Worst case"};
+
+    cout << "\nCPU cores available : " << thread::hardware_concurrency()
+         << " | Threads used : " << threadsUsed(depth) << "\n";
+    cout << left << setw(10) << "n" << setw(16) << "Input"
+         << setw(14) << "Comparisons" << setw(14) << "Normal(ms)"
+         << setw(14) << "Thread(ms)" << "Speed-up\n";
+    cout << string(76, '-') << "\n";
+
+    for (int n : sizes) {
+        for (int c = 0; c < 4; c++) {
+            vector<int> in = (c == 0) ? randomArray(n) : (c == 1) ? sortedArray(n)
+                           : (c == 2) ? reverseArray(n) : worstArray(n);
+            vector<int> a1 = in, a2 = in;
+
+            // run 3 times and keep the best time to reduce noise
+            double sBest = DBL_MAX, pBest = DBL_MAX;
+            long long cmp = 0;
+            for (int rep = 0; rep < 3; rep++) {
+                a1 = in; a2 = in; comparisons = 0;
+                auto t1 = high_resolution_clock::now();
+                mergeSort(a1, 0, n - 1);
+                auto t2 = high_resolution_clock::now();
+                parallelMergeSort(a2, 0, n - 1, depth);
+                auto t3 = high_resolution_clock::now();
+                sBest = min(sBest, duration<double, milli>(t2 - t1).count());
+                pBest = min(pBest, duration<double, milli>(t3 - t2).count());
+                cmp = comparisons;
+            }
+            if (a1 != a2) cout << "ERROR: results differ!\n";
+
+            cout << left << setw(10) << n << setw(16) << names[c]
+                 << setw(14) << cmp << fixed << setprecision(3)
+                 << setw(14) << sBest << setw(14) << pBest
+                 << setprecision(2) << sBest / pBest << "\n";
+        }
+    }
+
