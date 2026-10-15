@@ -75,3 +75,26 @@ vector<int> reverseArray(int n) {
     for (int i = 0; i < n; i++) a[i] = n - i;
     return a;
 }
+
+// Worst case: every merge must compare until both halves are empty.
+// Build it by "un-merging" a sorted array: even positions go left, odd go right.
+void makeWorst(vector<int>& a, int l, int r) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+    vector<int> left, right;
+    for (int i = l; i <= r; i++) {
+        if ((i - l) % 2 == 0) left.push_back(a[i]);
+        else                  right.push_back(a[i]);
+    }
+    int k = l;
+    for (int x : left)  a[k++] = x;
+    for (int x : right) a[k++] = x;
+    makeWorst(a, l, m);
+    makeWorst(a, m + 1, r);
+}
+
+vector<int> worstArray(int n) {
+    vector<int> a = sortedArray(n);
+    makeWorst(a, 0, n - 1);
+    return a;
+}
