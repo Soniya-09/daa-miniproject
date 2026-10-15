@@ -205,3 +205,30 @@ void benchmark(int depth) {
              << setw(14) << best << setprecision(2) << base / best << "\n";
     }
 }
+
+int main() {
+    cout << "===== Merge Sort vs Multithreaded Merge Sort =====\n";
+    cout << "1. Enter your own array\n";
+    cout << "2. Run performance test (random / best / reverse / worst inputs)\n";
+    cout << "Enter choice: ";
+    int choice;
+    cin >> choice;
+
+    int depth = 3;                              // 2^3 = 8 threads
+
+    if (choice == 1) {
+        int n;
+        cout << "Enter number of elements: ";
+        cin >> n;
+        if (n < 1) { cout << "At least 1 element is required.\n"; return 0; }
+        vector<int> a(n);
+        cout << "Enter " << n << " elements:\n";
+        for (int& x : a) cin >> x;
+        runBoth(a, depth, true);
+    } else if (choice == 2) {
+        benchmark(depth);
+    } else {
+        cout << "Invalid choice.\n";
+    }
+    return 0;
+}
