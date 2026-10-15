@@ -106,3 +106,40 @@ void printArray(const vector<int>& a) {
 }
 
 int threadsUsed(int depth) { return 1 << depth; }
+
+// Runs both versions on the same input and prints time, speed-up, comparisons.
+void runBoth(const vector<int>& input, int depth, bool show) {
+    vector<int> a1, a2;
+    int n = input.size();
+
+    // run 5 times and keep the best time (first run is slow due to cache warm-up)
+    double sTime = DBL_MAX, pTime = DBL_MAX;
+    for (int rep = 0; rep < 5; rep++) {
+        a1 = input; a2 = input; comparisons = 0;
+        auto t1 = high_resolution_clock::now();
+        mergeSort(a1, 0, n - 1);
+        auto t2 = high_resolution_clock::now();
+        parallelMergeSort(a2, 0, n - 1, depth);
+        auto t3 = high_resolution_clock::now();
+        sTime = min(sTime, duration<double, milli>(t2 - t1).count());
+        pTime = min(pTime, duration<double, milli>(t3 - t2).count());
+    }
+
+    if (show) {
+        cout << "\nSorted (normal)        : "; printArray(a1);
+        cout << "Sorted (multithreaded) : "; printArray(a2);
+    }
+    cout << fixed << setprecision(4);
+    cout << "Normal Merge Sort time        (ms) : " << sTime << "\n";
+    cout << "Multithreaded Merge Sort time (ms) : " << pTime
+         << "  [up to " << threadsUsed(depth) << " threads]\n";
+    cout << "Comparisons (normal)               : " << comparisons << "\n";
+    cout << setprecision(2);
+    if (pTime > 0) cout << "Speed-up (normal / multithreaded)  : " << sTime / pTime << "\n";
+    else           cout << "Speed-up (normal / multithreaded)  : too fast to measure\n";
+    if (n <= THRESHOLD)
+        cout << "Note: n <= THRESHOLD (" << THRESHOLD
+             << "), so no extra thread is created for this small array.\n";
+    cout << "Both results same and sorted?      : "
+         << ((a1 == a2 && is_sorted(a1.begin(), a1.end())) ? "YES" : "NO") << "\n";
+}
