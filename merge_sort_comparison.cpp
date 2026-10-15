@@ -184,3 +184,24 @@ void benchmark(int depth) {
         }
     }
 
+    // Effect of number of threads (n = 1,000,000 random)
+    int n = 1000000;
+    vector<int> in = randomArray(n);
+    cout << "\nEffect of thread count (n = " << n << ", random input)\n";
+    cout << left << setw(10) << "Threads" << setw(14) << "Time(ms)" << "Speed-up\n";
+    cout << string(32, '-') << "\n";
+    double base = 0;
+    for (int d = 0; d <= 4; d++) {
+        double best = DBL_MAX;
+        for (int rep = 0; rep < 3; rep++) {
+            vector<int> a = in;
+            auto t1 = high_resolution_clock::now();
+            parallelMergeSort(a, 0, n - 1, d);
+            auto t2 = high_resolution_clock::now();
+            best = min(best, duration<double, milli>(t2 - t1).count());
+        }
+        if (d == 0) base = best;
+        cout << left << setw(10) << threadsUsed(d) << fixed << setprecision(3)
+             << setw(14) << best << setprecision(2) << base / best << "\n";
+    }
+}
