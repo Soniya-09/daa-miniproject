@@ -54,3 +54,24 @@ void parallelMergeSort(vector<int>& a, int l, int r, int depth) {
     }
     merge(a, l, m, r, false);
 }
+
+// ---------- Input generators ----------
+vector<int> randomArray(int n) {
+    mt19937 gen(42);                            // fixed seed so results can be repeated
+    uniform_int_distribution<int> dist(1, 1000000);
+    vector<int> a(n);
+    for (int& x : a) x = dist(gen);
+    return a;
+}
+
+vector<int> sortedArray(int n) {                // best case: fewest comparisons
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) a[i] = i + 1;
+    return a;
+}
+
+vector<int> reverseArray(int n) {
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) a[i] = n - i;
+    return a;
+}
